@@ -1,0 +1,31 @@
+name: Hourly Telegram Birthday Messages
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  send-hourly:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Compute IST date
+        id: datecheck
+        run: |
+          TODAY_IST=$(TZ="Asia/Kolkata" date +%F)
+          echo "today_ist=$TODAY_IST" >> $GITHUB_OUTPUT
+
+      - name: Abort unless today is 2025-11-23 IST
+        if: steps.datecheck.outputs.today_ist != '2025-11-23'
+        run: exit 0
+
+      - name: Run send script
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: |
+          chmod +x send_message.sh
+          ./send_message.sh
