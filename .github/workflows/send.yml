@@ -23,10 +23,18 @@ jobs:
         run: exit 0
       - name: Check safety lock
         run: |
+    
+          # 1) require ALLOW_BDAY file
           if [ ! -f .github/ALLOW_BDAY ]; then
-            echo "Safety lock ON — no messages will be sent."
+            echo "Safety lock: .github/ALLOW_BDAY missing. Exiting."
             exit 0
           fi
+          # 2) require secret toggle (set to exactly "YES")
+          if [ "${{ secrets.BDAY_ENABLED }}" != "YES" ]; then
+            echo "Safety lock: secret BDAY_ENABLED not set to 'YES'. Exiting."
+            exit 0
+          fi
+  
       - name: Run send script
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
