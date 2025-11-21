@@ -17,7 +17,7 @@ MSG=$(sed -n "${LINE}p" messages.txt)
 
 TEXT="${MSG}"
 
-curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
+curl -s --retry 3 -X POST "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage" \
   --data-urlencode "chat_id=${CHAT_ID}" \
   --data-urlencode "text=${TEXT}" \
   --data-urlencode "parse_mode=Markdown" \
