@@ -21,7 +21,12 @@ jobs:
       - name: Abort unless today is 2025-11-23 IST
         if: steps.datecheck.outputs.today_ist != '2025-11-23'
         run: exit 0
-
+      - name: Check safety lock
+        run: |
+          if [ ! -f .github/ALLOW_BDAY ]; then
+            echo "Safety lock ON — no messages will be sent."
+            exit 0
+          fi
       - name: Run send script
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
